@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pool<T> where T : PoolObject
+public class Pool
 {
-    private T prefab;
-    private Queue<T> queue_PoolObject;
+    private GameObject prefab;
+    private Queue<GameObject> queue_PoolObject;
     private Transform transform_Pool;
+    private string poolName;
 
-    public Pool(T _prefab)
+    public Pool(GameObject _prefab, string _poolName)
     {
         prefab = _prefab;
+        poolName = _poolName;
         Init();
     }
 
@@ -21,49 +23,56 @@ public class Pool<T> where T : PoolObject
         {
             go = new GameObject{ name = "@Pool" };
         }
-        GameObject _transform_Pool = new GameObject { name = $"{typeof(T)}" };
+        GameObject _transform_Pool = new GameObject { name = poolName };
         _transform_Pool.transform.SetParent(go.transform);
         transform_Pool = _transform_Pool.transform;
     }
 
-    public T Get()
+    public GameObject Get()
     {
-        if(queue_PoolObject.TryDequeue(out T poolObject))
+        GameObject poolObject;
+        if (queue_PoolObject.TryDequeue(out GameObject _poolObject))
         {
-            poolObject.SetUp();
-            return poolObject;
+            poolObject = _poolObject;
         }
 
         else
         {
-            T _poolObject = GameObject.Instantiate<T>(prefab);
-            _poolObject.SetUp();
-            return _poolObject;
+            poolObject = GameObject.Instantiate(prefab);
         }
+
+        poolObject.SetActive(true);
+        return poolObject;
     }
 
-    public void Push(T _poolObject)
+    public void Push(GameObject _poolObject)
     {
-        _poolObject.Clear();
         _poolObject.transform.SetParent(transform_Pool);
+        _poolObject.SetActive(false);
         queue_PoolObject.Enqueue(_poolObject);
+    }
+
+    public void Clear()
+    {
+
     }
 }
 
 public class PoolManager
 {
-    public Dictionary<string, Pool<PoolObject>> dictionary_Pool = new Dictionary<string, Pool<PoolObject>>();
+    public Dictionary<string, Pool> dictionary_Pool = new Dictionary<string, Pool>();
 
     public PoolManager()
     {
         
     }
-    public PoolObject Get(string _key)
+    public GameObject Get(string _key)
     {
-        if (dictionary_Pool.TryGetValue(_key, out Pool<PoolObject> _pool))
+        if (dictionary_Pool.TryGetValue(_key, out Pool pool))
         {
-            return _pool.Get();
+            return pool.Get();
         }
+        Debug.LogError($"[{_key}] Pool is not exist");
         return null;
     }
 
@@ -71,4 +80,22 @@ public class PoolManager
     {
 
     }
+
+    public void CreatePool(GameObject _prefab,string _key)
+    {
+        if (dictionary_Pool.ContainsKey(_key))
+            return;
+        Pool pool = new Pool(_prefab, $"{_key} Pool");
+        dictionary_Pool.Add(_key, pool);
+    }
+
+    public void DeletePool(string _key)
+    {
+        if(dictionary_Pool.ContainsKey(_key))
+        {
+            dictionary_Pool[_key].Clear();
+            dictionary_Pool.Remove(_key);
+        }
+    }
+
 }

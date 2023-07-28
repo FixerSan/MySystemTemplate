@@ -25,15 +25,18 @@ public class ResourceManager
         return null;
     }
 
-/*    public GameObject Instantiate(string key, Transform parent = null, bool pooling = false)
+    public GameObject Instantiate(string key, Transform parent = null, bool pooling = false)
     {
         GameObject prefab = Load<GameObject>($"{key}");
-        if(prefab == null)
+        if (prefab == null)
         {
-            return;
+            Debug.LogError($"Resource Manager Fail Load : {key}");
+            return null;
         }
 
-        if(pooling)
-            return Managers.Resource
-    }*/
+        if (pooling)
+            return Managers.Pool.Get(key);
+        return null;
+
+    }
 }
