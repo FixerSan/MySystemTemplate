@@ -62,10 +62,7 @@ public class PoolManager
 {
     public Dictionary<string, Pool> dictionary_Pool = new Dictionary<string, Pool>();
 
-    public PoolManager()
-    {
-        
-    }
+
     public GameObject Get(string _key)
     {
         if (dictionary_Pool.TryGetValue(_key, out Pool pool))
@@ -76,12 +73,22 @@ public class PoolManager
         return null;
     }
 
-    public void Push()
+    public void Push(string _key, GameObject _poolObject)
     {
-
+        if(dictionary_Pool.ContainsKey(_key))
+        {
+            dictionary_Pool[_key].Push(_poolObject);
+        }
+        else
+        {
+            CreatePool(_key, _poolObject, () =>
+            {
+                dictionary_Pool[_key].Push(_poolObject);
+            });
+        }
     }
 
-    public void CreatePool(GameObject _prefab,string _key)
+    public void CreatePool(string _key, GameObject _prefab, System.Action _callback = null)
     {
         if (dictionary_Pool.ContainsKey(_key))
             return;
@@ -98,4 +105,8 @@ public class PoolManager
         }
     }
 
+    public PoolManager()
+    {
+        
+    }
 }
