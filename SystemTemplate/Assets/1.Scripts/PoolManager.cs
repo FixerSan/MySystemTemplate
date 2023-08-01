@@ -13,6 +13,7 @@ public class Pool
     {
         prefab = _prefab;
         poolName = _poolName;
+        queue_PoolObject = new Queue<GameObject>();
         Init();
     }
 
@@ -54,7 +55,7 @@ public class Pool
 
     public void Clear()
     {
-
+        queue_PoolObject.Clear();
     }
 }
 
@@ -94,6 +95,7 @@ public class PoolManager
             return;
         Pool pool = new Pool(_prefab, $"{_key} Pool");
         dictionary_Pool.Add(_key, pool);
+        _callback?.Invoke();
     }
 
     public void DeletePool(string _key)
