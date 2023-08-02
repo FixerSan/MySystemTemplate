@@ -32,8 +32,8 @@ public class Managers : MonoBehaviour
     }
     #endregion
     //매니저를 추가할 자리
-    private ResourceManager resource;
-    private PoolManager pool;
-    public static ResourceManager Resource { get { return instance?.resource; } }
-    public static PoolManager Pool { get { return instance?.pool; } }
+    private ResourceManager resource = new ResourceManager();
+    private PoolManager pool = new PoolManager();
+    public static ResourceManager Resource { get { return Instance?.resource; } }
+    public static PoolManager Pool { get { return Instance?.pool; } }
 }

@@ -40,6 +40,7 @@ public class Pool
         else
         {
             poolObject = GameObject.Instantiate(prefab);
+            poolObject.name = prefab.name;
         }
 
         poolObject.SetActive(true);
@@ -56,6 +57,7 @@ public class Pool
     public void Clear()
     {
         queue_PoolObject.Clear();
+        Managers.Resource.Destroy(transform_Pool.gameObject);
     }
 }
 
@@ -63,6 +65,10 @@ public class PoolManager
 {
     public Dictionary<string, Pool> dictionary_Pool = new Dictionary<string, Pool>();
 
+    public void Clear()
+    {
+        dictionary_Pool.Clear();
+    }
 
     public GameObject Get(string _key)
     {
@@ -70,31 +76,26 @@ public class PoolManager
         {
             return pool.Get();
         }
-        Debug.LogError($"[{_key}] Pool is not exist");
         return null;
     }
 
-    public void Push(string _key, GameObject _poolObject)
+    public bool Push(GameObject _go)
     {
-        if(dictionary_Pool.ContainsKey(_key))
+        if(dictionary_Pool.ContainsKey(_go.name))
         {
-            dictionary_Pool[_key].Push(_poolObject);
+            dictionary_Pool[_go.name].Push(_go);
+            return true;
         }
-        else
-        {
-            CreatePool(_key, _poolObject, () =>
-            {
-                dictionary_Pool[_key].Push(_poolObject);
-            });
-        }
+        return false;
     }
 
-    public void CreatePool(string _key, GameObject _prefab, System.Action _callback = null)
+    public void CreatePool(GameObject _prefab, System.Action _callback = null)
     {
-        if (dictionary_Pool.ContainsKey(_key))
+        string key = _prefab.name;
+        if (dictionary_Pool.ContainsKey(key))
             return;
-        Pool pool = new Pool(_prefab, $"{_key} Pool");
-        dictionary_Pool.Add(_key, pool);
+        Pool pool = new Pool(_prefab, $"{key} Pool");
+        dictionary_Pool.Add(key, pool);
         _callback?.Invoke();
     }
 
