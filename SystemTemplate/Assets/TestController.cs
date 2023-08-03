@@ -7,16 +7,7 @@ public class TestController : MonoBehaviour
     public string testKey = "TestAsset";
     public List<GameObject> poolingObject = new List<GameObject>();
     public Transform poolingTransform;
-    // Start is called before the first frame update
-    void Start()
-    {
-/*        Managers.Resource.LoadAllAsynk<UnityEngine.Object>("Test", (_loadFileName,_currentLoadCount,_totalLoadCount) =>
-        {
-            Debug.Log($"{_loadFileName}  /  {_currentLoadCount / (float)_totalLoadCount}");
-        });*/
-    }
 
-    // Update is called once per frame
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Q))
