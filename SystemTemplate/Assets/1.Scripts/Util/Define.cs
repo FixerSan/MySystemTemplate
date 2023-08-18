@@ -14,4 +14,11 @@ public class Define
         Drag,
         EndDrag,
     }
+
+    public enum Scene
+    {
+        Loading,
+        Guild,
+        IceDungeon
+    }
 }

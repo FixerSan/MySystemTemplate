@@ -2,17 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIToast : MonoBehaviour
+public class UIToast : UIBase
 {
-    // Start is called before the first frame update
-    void Start()
+    enum Images
     {
-        
+        BackgroundImage
     }
 
-    // Update is called once per frame
-    void Update()
+    enum Texts
     {
-        
+        ToastMessageValueText,
+    }
+
+    public void OnEnable()
+    {
+        PopupOpenAnimation(gameObject);
+    }
+
+    private void Awake()
+    {
+        Init();
+    }
+
+    public override bool Init()
+    {
+        if (base.Init() == false)
+            return false;
+
+        BindImage(typeof(Images));
+        BindText(typeof(Texts));
+        Refresh();
+        return true;
+    }
+
+    public void SetInfo(string msg)
+    {
+        // 메시지 변경
+        transform.localScale = Vector3.one;
+        GetText((int)Texts.ToastMessageValueText).text = msg;
+        Refresh();
+    }
+
+    void Refresh()
+    {
+
+
     }
 }

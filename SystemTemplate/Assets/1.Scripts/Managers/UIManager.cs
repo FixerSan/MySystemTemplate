@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -96,13 +97,83 @@ public class UIManager : MonoBehaviour
         GameObject go = Managers.Resource.Instantiate($"{_name}");
         T popup = go.GetOrAddComponent<T>();
         popupStack.Push(popup);
-
         go.transform.SetParent(Root.transform);
-
-        RefreshTimeScale();
-
         return popup;
     }
 
+    public void ClosePopupUI(UIPopup _popup)
+    {
+        if (popupStack.Count == 0)
+            return;
 
+        if(popupStack.Peek() != _popup)
+        {
+            Debug.Log("Close Popup Failed");
+            return;
+        }
+
+        ClosePopupUI(); 
+    }
+
+    private void ClosePopupUI()
+    {
+        if (popupStack.Count == 0)
+            return;
+
+        UIPopup popup = popupStack.Pop();
+        Managers.Resource.Destroy(popup.gameObject);
+        popup = null;
+        order--;
+    }
+
+    public void CloseAllPopupUI()
+    {
+        while (popupStack.Count > 0)
+        {
+            ClosePopupUI();
+        }
+    }
+
+    public UIToast ShowToast(string _description)
+    {
+        string name = typeof(UIToast).Name;
+        GameObject go = Managers.Resource.Instantiate($"{name}", _pooling: true);
+        UIToast popup = go.GetOrAddComponent<UIToast>();
+        popup.SetInfo(_description);
+        toastStack.Push(popup);
+        go.transform.SetParent(Root.transform);
+        Managers.Routine.StartCoroutine(CloseToastUIRoutine());
+        return popup;
+    }
+
+    private IEnumerator CloseToastUIRoutine()
+    {
+        yield return new WaitForSeconds(1f);
+        CloseToastUI();
+    }
+
+    public void CloseToastUI()
+    {
+        if(toastStack.Count == 0)
+        {
+            return;
+        }
+
+        UIToast toast = toastStack.Pop();
+        Managers.Resource.Destroy(toast.gameObject);
+        toast = null;
+        toastOrder--;
+    }
+
+    public int GetPopupCount()
+    {
+        return popupStack.Count;
+    }
+
+    public void Clear()
+    {
+        CloseAllPopupUI();
+        Time.timeScale = 1;
+        sceneUI = null;
+    }
 }
