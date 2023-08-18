@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Managers : MonoBehaviour
 {
-    #region Sington
+    #region Singleton
     private static Managers instance;
     public static Managers Instance
     {
@@ -24,13 +24,10 @@ public class Managers : MonoBehaviour
 
         GameObject go = GameObject.Find("@Managers");
         if (go == null)
-        {
             go = new GameObject { name = "@Managers" };
-            go.AddComponent<Managers>();
-        }
+        instance = go.GetOrAddComponent<Managers>();
 
         DontDestroyOnLoad(go);
-        instance = go.GetOrAddComponent<Managers>();
     }
 
     private void Awake()
@@ -49,5 +46,15 @@ public class Managers : MonoBehaviour
     public static ResourceManager Resource { get { return Instance?.resource; } }
     public static PoolManager Pool { get { return Instance?.pool; } }
     public static UIManager UI { get { return Instance?.ui; } }
-    public static CoroutineManager Routine{ get { return CoroutineManager.Instance; } }
+    public static CoroutineManager Routine { get { return CoroutineManager.Instance; } }
+
+    public static SceneManager scene { get { return SceneManager.Instance; } }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.F1))
+        {
+            Managers.scene.LoadScene(Define.Scene.Guild);
+        }
+    }
 }
