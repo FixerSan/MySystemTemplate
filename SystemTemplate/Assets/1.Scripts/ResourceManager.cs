@@ -86,7 +86,7 @@ public class ResourceManager
     }
 
 
-    public GameObject Instantiate(string _key, Transform _parent = null)
+    public GameObject Instantiate(string _key, Transform _parent = null, bool _pooling = false)
     {
         GameObject po = Managers.Pool.Get(_key);
         if (po != null)

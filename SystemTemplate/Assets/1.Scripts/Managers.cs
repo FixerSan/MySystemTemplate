@@ -17,7 +17,7 @@ public class Managers : MonoBehaviour
 
     private static void Init()
     {
-        if(!instance)
+        if(instance == null)
         {
             GameObject go = GameObject.Find("@Managers");
             if(!go)
@@ -34,6 +34,8 @@ public class Managers : MonoBehaviour
     //매니저를 추가할 자리
     private ResourceManager resource = new ResourceManager();
     private PoolManager pool = new PoolManager();
+    private UIManager ui = new UIManager();
     public static ResourceManager Resource { get { return Instance?.resource; } }
     public static PoolManager Pool { get { return Instance?.pool; } }
+    public static UIManager UI { get { return Instance?.ui; } }
 }

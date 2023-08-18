@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 public abstract class UIBase : MonoBehaviour
 {
-    protected Dictionary<Type, Object[]> dictionary_Objects = new Dictionary<Type, Object[]>();
+    protected Dictionary<Type, Object[]> objectDictionary = new Dictionary<Type, Object[]>();
     protected bool init = false;
 
     public virtual bool Init()
@@ -30,7 +30,7 @@ public abstract class UIBase : MonoBehaviour
     {
         string[] names = Enum.GetNames(_type);
         Object[] objects = new Object[names.Length];
-        dictionary_Objects.Add(typeof(T), objects);
+        objectDictionary.Add(typeof(T), objects);
 
         for (int i = 0; i < names.Length; i++)
         {
@@ -52,7 +52,7 @@ public abstract class UIBase : MonoBehaviour
     protected T Get<T>(int _index) where T : Object
     {
         Object[] objects = null;
-        if (!dictionary_Objects.TryGetValue(typeof(T), out objects))
+        if (!objectDictionary.TryGetValue(typeof(T), out objects))
             return null;
 
         return objects[_index] as T;

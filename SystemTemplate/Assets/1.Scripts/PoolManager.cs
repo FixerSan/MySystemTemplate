@@ -5,7 +5,7 @@ using UnityEngine;
 public class Pool
 {
     private GameObject prefab;
-    private Queue<GameObject> queue_PoolObject;
+    private Queue<GameObject> poolObjectQueue;
     private Transform transform_Pool;
     private string poolName;
 
@@ -13,7 +13,7 @@ public class Pool
     {
         prefab = _prefab;
         poolName = _poolName;
-        queue_PoolObject = new Queue<GameObject>();
+        poolObjectQueue = new Queue<GameObject>();
         Init();
     }
 
@@ -32,7 +32,7 @@ public class Pool
     public GameObject Get()
     {
         GameObject poolObject;
-        if (queue_PoolObject.TryDequeue(out GameObject _poolObject))
+        if (poolObjectQueue.TryDequeue(out GameObject _poolObject))
         {
             poolObject = _poolObject;
         }
@@ -51,28 +51,28 @@ public class Pool
     {
         _poolObject.transform.SetParent(transform_Pool);
         _poolObject.SetActive(false);
-        queue_PoolObject.Enqueue(_poolObject);
+        poolObjectQueue.Enqueue(_poolObject);
     }
 
     public void Clear()
     {
-        queue_PoolObject.Clear();
+        poolObjectQueue.Clear();
         Managers.Resource.Destroy(transform_Pool.gameObject);
     }
 }
 
 public class PoolManager
 {
-    public Dictionary<string, Pool> dictionary_Pool = new Dictionary<string, Pool>();
+    public Dictionary<string, Pool> poolDictionary = new Dictionary<string, Pool>();
 
     public void Clear()
     {
-        dictionary_Pool.Clear();
+        poolDictionary.Clear();
     }
 
     public GameObject Get(string _key)
     {
-        if (dictionary_Pool.TryGetValue(_key, out Pool pool))
+        if (poolDictionary.TryGetValue(_key, out Pool pool))
         {
             return pool.Get();
         }
@@ -81,9 +81,9 @@ public class PoolManager
 
     public bool Push(GameObject _go)
     {
-        if(dictionary_Pool.ContainsKey(_go.name))
+        if(poolDictionary.ContainsKey(_go.name))
         {
-            dictionary_Pool[_go.name].Push(_go);
+            poolDictionary[_go.name].Push(_go);
             return true;
         }
         return false;
@@ -92,19 +92,19 @@ public class PoolManager
     public void CreatePool(GameObject _prefab, System.Action _callback = null)
     {
         string key = _prefab.name;
-        if (dictionary_Pool.ContainsKey(key))
+        if (poolDictionary.ContainsKey(key))
             return;
         Pool pool = new Pool(_prefab, $"{key} Pool");
-        dictionary_Pool.Add(key, pool);
+        poolDictionary.Add(key, pool);
         _callback?.Invoke();
     }
 
     public void DeletePool(string _key)
     {
-        if(dictionary_Pool.ContainsKey(_key))
+        if(poolDictionary.ContainsKey(_key))
         {
-            dictionary_Pool[_key].Clear();
-            dictionary_Pool.Remove(_key);
+            poolDictionary[_key].Clear();
+            poolDictionary.Remove(_key);
         }
     }
 
