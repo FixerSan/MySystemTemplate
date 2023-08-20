@@ -7,11 +7,18 @@ using Object = UnityEngine.Object;
 
 public class ResourceManager 
 {
-    private Dictionary<string, Object> dictionary_Resources = new Dictionary<string, Object>();
+    private Dictionary<string, Object> resourceDictionary = new Dictionary<string, Object>();
+    private Dictionary<string, Object> preResourceDictionary = new Dictionary<string, Object>();
 
     public void Load<T>(string _key, Action<T> _callback = null) where T : Object
     {
-        T ob = CheckLoaded<T>(_key);
+        string loadKey = _key;
+        #region 예외처리
+        if (typeof(T) == typeof(TextAsset))
+            loadKey = _key + "Data";
+        #endregion
+
+        T ob = CheckLoaded<T>(loadKey);
 
         if (ob != null)
         {
@@ -19,14 +26,14 @@ public class ResourceManager
             return;
         }
 
-        LoadAsync<T>(_key, (_ob) =>
+        LoadAsync<T>(loadKey, (_ob) =>
         {
             _callback?.Invoke(_ob as T);
         });
     }
 
     //로딩창 사용 용도
-    public void LoadAllAsynk<T>(string _label, Action<string,int,int> _callback = null) where T : Object
+    public void LoadAllAsync<T>(string _label, Action<string,int,int> _callback = null) where T : Object
     {
         var operationHandle = Addressables.LoadResourceLocationsAsync(_label, typeof(T));
 
@@ -49,42 +56,47 @@ public class ResourceManager
     //이미 로드 된 것(딕셔너리)을 뽑아올 때
     private T CheckLoaded<T>(string _key) where T : Object
     {
-        if (dictionary_Resources.TryGetValue(_key, out Object resource))
+        if (resourceDictionary.TryGetValue(_key, out Object resource))
         {
             return resource as T;
         }
 
-        //만약 스프라이트라면 키를 바꿔서 저장했으니까 스프라이트인지 확인한 후 
-        if (typeof(T) == typeof(Sprite))                      
+        if (preResourceDictionary.TryGetValue(_key, out Object preResource))
         {
-            _key = _key + ".sprite";
-            if (dictionary_Resources.TryGetValue(_key, out Object sprite))
-            {
-                return sprite as T;
-            }
+            return preResource as T;
         }
         return null;
     }
 
     private void LoadAsync<T>(string _key, Action<T> _callback = null) where T : Object
     {
-        //없다면 키로 어드레서블 loadasync를 하는데, 만약 키에 .sprite가 있다면 스프라이트를 뺌
-        string loadkey = _key;
-        if (_key.Contains(".sprite"))
-        {
-            loadkey = $"{_key}{_key.Replace(".sprite","")}";
-        }
-
         //최종적인 key를 가지고 로드 후 로드 된 값을 딕셔너리에 넣고 콜백
-        var asyncOperation = Addressables.LoadAssetAsync<T>(loadkey);
+        var asyncOperation = Addressables.LoadAssetAsync<T>(_key);
         asyncOperation.Completed += (op) => 
         {
-            if(!dictionary_Resources.ContainsKey(_key))
-                dictionary_Resources.Add(_key, op.Result);
+            if(!resourceDictionary.ContainsKey(_key))
+                resourceDictionary.Add(_key, op.Result);
             _callback?.Invoke(op.Result as T);
         };
     }
 
+    public void PreResourceLoad()
+    {
+        var operationHandle = Addressables.LoadResourceLocationsAsync("Preload");
+
+        operationHandle.Completed += (op) =>
+        {
+            foreach (var result in op.Result)
+            {
+                var asyncOperation = Addressables.LoadAssetAsync<Object>(result.PrimaryKey);
+                asyncOperation.Completed += (op) =>
+                {
+                    if (!resourceDictionary.ContainsKey(result.PrimaryKey))
+                        resourceDictionary.Add(result.PrimaryKey, op.Result);
+                };
+            }
+        };
+    }
 
     public GameObject Instantiate(string _key, Transform _parent = null, bool _pooling = false)
     {

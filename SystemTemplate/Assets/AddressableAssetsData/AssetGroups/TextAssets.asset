@@ -21,6 +21,15 @@ MonoBehaviour:
     m_Address: Data
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: a941ce1ef9421ab42a7550ab99bf6d8a
+    m_Address: GuildSceneData
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e43e395bb93d6c04c9875d9a953faf3e
+    m_Address: PreloadData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Preload
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 13094a1f4ed290e49bde419b70fd20dd, type: 2}
   m_SchemaSet:

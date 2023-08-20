@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class UIManager : MonoBehaviour
+public class UIManager 
 {
     private int order = 10;
     private int toastOrder = 500;
@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
 
     public UIScene SceneUI { get { return sceneUI; } }
 
-    public event Action<int> OnTimeScaleChanged;
+    //public event Action<int> OnTimeScaleChanged;
 
     public GameObject Root
     {
