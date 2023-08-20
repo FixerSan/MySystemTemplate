@@ -24,7 +24,7 @@ public class Managers : MonoBehaviour
 
         GameObject go = GameObject.Find("@Managers");
         if (go == null)
-            go = new GameObject { name = "@Managers" };
+            go = new GameObject("@Managers");
         instance = go.GetOrAddComponent<Managers>();
 
         DontDestroyOnLoad(go);
@@ -42,19 +42,12 @@ public class Managers : MonoBehaviour
     private ResourceManager resource = new ResourceManager();
     private PoolManager pool = new PoolManager();
     private UIManager ui = new UIManager();
+    private DataManager data = new DataManager();
 
     public static ResourceManager Resource { get { return Instance?.resource; } }
     public static PoolManager Pool { get { return Instance?.pool; } }
     public static UIManager UI { get { return Instance?.ui; } }
+    public static DataManager Data { get { return Instance?.data; } }
     public static CoroutineManager Routine { get { return CoroutineManager.Instance; } }
-
     public static SceneManager scene { get { return SceneManager.Instance; } }
-
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.F1))
-        {
-            Managers.scene.LoadScene(Define.Scene.Guild);
-        }
-    }
 }

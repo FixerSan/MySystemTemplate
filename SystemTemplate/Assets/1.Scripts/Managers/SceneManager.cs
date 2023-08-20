@@ -16,13 +16,15 @@ public class SceneManager : MonoBehaviour
             go = new GameObject { name = $"[{nameof(SceneManager)}]" };
         instance = go.GetOrAddComponent<SceneManager>();
         DontDestroyOnLoad(go);
+
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += instance.LoadedScene;
+
+        Managers.Resource.PreResourceLoad();
+        Managers.Data.PreDataLoad();
+        instance.LoadedScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene(), UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
     #endregion
 
-    private void Awake()
-    {
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += LoadedScene;
-    }
     private string currentScene = string.Empty;
 
     public void LoadScene(Define.Scene _scene)
@@ -42,21 +44,23 @@ public class SceneManager : MonoBehaviour
 
     public void AddScene(string _sceneName)
     {
+        BaseScene bs = null;
         Define.Scene addScene = Util.ParseEnum<Define.Scene>(_sceneName);
         switch(addScene)
         {
             case Define.Scene.Loading:
-                gameObject.AddComponent<LoadingScene>();
+                bs = gameObject.AddComponent<LoadingScene>();
                 break;
 
             case Define.Scene.Guild:
-                gameObject.AddComponent<GuildScene>();
+                bs = gameObject.AddComponent<GuildScene>();
                 break;
 
             case Define.Scene.IceDungeon:
-                gameObject.AddComponent<IceDungeonScene>();
+                bs = gameObject.AddComponent<IceDungeonScene>();
                 break;
         }
+        bs.Init();
     }
 
     public void RemoveScene(string _sceneName, System.Action _callback = null)
@@ -67,21 +71,26 @@ public class SceneManager : MonoBehaviour
             return;
         }
 
-        Define.Scene addScene = Util.ParseEnum<Define.Scene>(_sceneName);
-        switch (addScene)
+        BaseScene bs = null;
+
+        Define.Scene removeScene = Util.ParseEnum<Define.Scene>(_sceneName);
+        switch (removeScene)
         {
             case Define.Scene.Loading:
-                Destroy(gameObject.GetComponent<LoadingScene>());
+                bs = gameObject.GetComponent<LoadingScene>();
                 break;
 
             case Define.Scene.Guild:
-                Destroy(gameObject.GetComponent<GuildScene>());
+                bs = gameObject.GetComponent<GuildScene>();
                 break;
 
             case Define.Scene.IceDungeon:
-                Destroy(gameObject.GetComponent<IceDungeonScene>());
+                bs = gameObject.GetComponent<IceDungeonScene>();
                 break;
         }
+
+        bs.Clear();
+        Destroy(bs);
         _callback?.Invoke();
     }
 
