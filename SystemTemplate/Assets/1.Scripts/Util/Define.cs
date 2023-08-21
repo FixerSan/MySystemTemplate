@@ -21,4 +21,14 @@ public class Define
         Guild,
         IceDungeon
     }
+
+    public enum Item
+    {
+        TestItem
+    }
+
+    public enum SpeakerType
+    {
+
+    }
 }

@@ -60,4 +60,19 @@ public static class Util
     {
         return (T)Enum.Parse(typeof(T), _value, true);
     }
+
+    public static BaseItem FindItem(this List<BaseItem> _itemList, Define.Item _item)
+    {
+        if (_itemList.Count == 0)
+            return null;
+
+        string itemName = _item.ToString();
+        foreach (var item in _itemList)
+        {
+            item.itemData.name = itemName;
+            return item;
+        }
+
+        return null;
+    }
 }
