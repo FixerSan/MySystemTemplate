@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Pool
@@ -70,13 +71,12 @@ public class PoolManager
         poolDictionary.Clear();
     }
 
-    public GameObject Get(string _key)
+    public GameObject Get(GameObject _poolingObject)
     {
-        if (poolDictionary.TryGetValue(_key, out Pool pool))
-        {
-            return pool.Get();
-        }
-        return null;
+        if (!poolDictionary.ContainsKey(_poolingObject.name))
+            CreatePool(_poolingObject);
+
+        return poolDictionary[_poolingObject.name].Get();
     }
 
     public bool Push(GameObject _go)
