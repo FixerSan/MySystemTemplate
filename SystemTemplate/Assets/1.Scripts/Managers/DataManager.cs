@@ -9,38 +9,65 @@ public class DataManager
     private bool isPreload = false;
 
     private Dictionary<int, ItemData> itemDataDictionary = new Dictionary<int, ItemData>();
-    private Dictionary<int, DialogData> preDialogData = new Dictionary<int, DialogData>();
-    private Dictionary<int, DialogData> sceneDialogData = new Dictionary<int, DialogData>();
+    private Dictionary<int, PlayerData> playerDataDictionary = new Dictionary<int, PlayerData>();
+    private Dictionary<int, MonsterData> monsterDataDictionary = new Dictionary<int, MonsterData>();
 
+    private Dictionary<int, DialogData> preDialogDataDictionary = new Dictionary<int, DialogData>();
+    private Dictionary<int, DialogData> sceneDialogDataDictionary = new Dictionary<int, DialogData>();
 
-    public void GetItem(int _itemUID, Action<ItemData> _callback)
+    //public void Get<T>(int _key, Action<T> _callback) where T : Data
+    //{
+    //    Type type = typeof(T);
+    //    if(typeof(ItemData) == type)
+    //    {
+    //        if(itemDataDictionary.TryGetValue(_key, out ItemData itemData))
+    //        {
+    //            _callback?.Invoke(itemData as T);
+    //            return;
+    //        }
+    //    }
+    //}
+
+    public void GetItemData(int _itemUID, Action<ItemData> _callback)
     {
         if (itemDataDictionary.TryGetValue(_itemUID, out ItemData itemData))
             _callback?.Invoke(itemData);
     }
 
-    public void GetDialog(int _dialogUID, Action<DialogData> _callback)
+    public void GetPlayerData(int _level, Action<PlayerData> _callback)
     {
-        if (sceneDialogData.TryGetValue(_dialogUID, out DialogData dialogData))
+        if (playerDataDictionary.TryGetValue(_level, out PlayerData playerData))
+            _callback?.Invoke(playerData);
+    }
+
+    public void GetMonsterData(int _monsterUID, Action<MonsterData> _callback)
+    {
+        if (monsterDataDictionary.TryGetValue(_monsterUID, out MonsterData monsterData))
+            _callback?.Invoke(monsterData);
+    }
+
+    public void GetDialogData(int _dialogUID, Action<DialogData> _callback)
+    {
+        if (sceneDialogDataDictionary.TryGetValue(_dialogUID, out DialogData dialogData))
             _callback?.Invoke(dialogData);
     }
 
     public void LoadSceneData(Define.Scene _scene)
     {
         ClearSceneData();
-        Managers.Resource.Load<TextAsset>(_scene.ToString()+"Scene",(sceneDataJson) => 
+        Managers.Resource.Load<TextAsset>(_scene.ToString(),(sceneDataJson) => 
         {
             SceneData sceneData = JsonUtility.FromJson<SceneData>(sceneDataJson.text);
             foreach (var dialog in sceneData.dialogDatas)
             {
-                sceneDialogData.TryAdd(dialog.dialogUID, dialog);
+                sceneDialogDataDictionary.TryAdd(dialog.dialogUID, dialog);
             }
         });
     }
 
     public void ClearSceneData()
     {
-        sceneDialogData.Clear();
+        sceneDialogDataDictionary.Clear();
     }
 
     public void PreDataLoad()
@@ -53,28 +80,41 @@ public class DataManager
         Managers.Resource.Load<TextAsset>("Preload", (preDataJson) =>
         {
             PreData preData = JsonUtility.FromJson<PreData>(preDataJson.text);
-            foreach (var item in preData.itemDatas)
+
+            for (int i = 0; i < preData.itemDatas.Length; i++)
             {
-                itemDataDictionary.TryAdd(item.itemUID, item);
+                itemDataDictionary.TryAdd(preData.itemDatas[i].itemUID, preData.itemDatas[i]);
+            }
+
+            for (int i = 0; i < preData.dialogDatas.Length; i++)
+            {
+                preDialogDataDictionary.TryAdd(preData.dialogDatas[i].dialogUID, preData.dialogDatas[i]);
             }
         });
     }
 }
 
+public class Data
+{
+
+}
+
 [System.Serializable]
-public class SceneData
+public class SceneData : Data
 {
     public DialogData[] dialogDatas;
 }
 
-public class PreData
+public class PreData : Data
 {
+    public PlayerData[] playerDatas;
+    public MonsterData[] monsterDatas;
     public ItemData[] itemDatas;
     public DialogData[] dialogDatas;
 }
 
 [System.Serializable]
-public class ItemData
+public class ItemData : Data
 {
     public int itemUID;
     public string name;
@@ -83,7 +123,7 @@ public class ItemData
 }
 
 [System.Serializable]
-public class DialogData
+public class DialogData : Data
 {
     public int dialogUID;
     public string speakerName;
