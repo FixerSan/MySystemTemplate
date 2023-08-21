@@ -87,6 +87,9 @@ public class SceneManager : MonoBehaviour
             case Define.Scene.IceDungeon:
                 bs = gameObject.GetComponent<IceDungeonScene>();
                 break;
+
+            default:
+                return;
         }
 
         bs.Clear();
