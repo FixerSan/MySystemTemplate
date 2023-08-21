@@ -10,7 +10,7 @@ public class Inventory : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            Managers.Data.GetItem(0, (item) => 
+            Managers.Data.GetItemData(0, (item) => 
             {
                 BaseItem baseItem = new BaseItem(item, 1);
                 itemList.Add(baseItem);

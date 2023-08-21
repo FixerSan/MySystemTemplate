@@ -1,4 +1,26 @@
 {
+"playerDatas":[
+ {
+  "level": 1,
+  "levelUpExp": 100000,
+  "hp": 100,
+  "mp": 100,
+  "force": 10,
+  "speed": 10,
+  "jumpForce": 5
+ }
+],
+"monsterDatas":[
+ {
+  "monsterUID": 0,
+  "monsterName": "TestMonster",
+  "description": "테스트 몬스터이다",
+  "exp": 1,
+  "hp": 10,
+  "force": 5,
+  "speed": 5
+ }
+],
 "itemDatas":[
  {
   "itemUID": 0,
@@ -10,10 +32,25 @@
 "dialogDatas":[
  {
   "dialogUID": 0,
-  "speakerName": 123,
+  "speakerName": "캐릭터 이름",
   "speakerImageKey": 123,
+  "speakerType": "OneButton",
   "sentence": 123,
-  "SpeakerType": 123
+  "buttonOneContent": "다음",
+  "buttonTwoContent": "null",
+  "buttonThreeContent": "null",
+  "nextDialogUID": "null"
+ },
+ {
+  "dialogUID": 1,
+  "speakerName": "캐릭터 이름",
+  "speakerImageKey": 123,
+  "speakerType": "TwoButton",
+  "sentence": 123,
+  "buttonOneContent": "수락",
+  "buttonTwoContent": "거절",
+  "buttonThreeContent": "null",
+  "nextDialogUID": "null"
  }
 ]
 }

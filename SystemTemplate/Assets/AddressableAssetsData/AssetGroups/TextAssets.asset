@@ -18,7 +18,11 @@ MonoBehaviour:
   m_GUID: d93f7869092af584cb309c759ff67f28
   m_SerializeEntries:
   - m_GUID: e43e395bb93d6c04c9875d9a953faf3e
-    m_Address: GuildData
+    m_Address: Guild.Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 50007a4474d660f4fbcb7ab8f5115dfa
+    m_Address: Preload.Data
     m_ReadOnly: 0
     m_SerializedLabels:
     - Preload
