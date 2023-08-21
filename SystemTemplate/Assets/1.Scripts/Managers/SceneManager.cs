@@ -17,11 +17,14 @@ public class SceneManager : MonoBehaviour
         instance = go.GetOrAddComponent<SceneManager>();
         DontDestroyOnLoad(go);
 
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += instance.LoadedScene;
+        Managers.Resource.PreResourceLoad(() => 
+        {
+            Managers.Data.PreDataLoad();
 
-        Managers.Resource.PreResourceLoad();
-        Managers.Data.PreDataLoad();
-        instance.LoadedScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene(), UnityEngine.SceneManagement.LoadSceneMode.Single);
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += instance.LoadedScene;
+            instance.LoadedScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene(), UnityEngine.SceneManagement.LoadSceneMode.Single);
+        });
+
     }
     #endregion
 
