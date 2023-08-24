@@ -97,9 +97,9 @@ public class ObjectManager
         }
     }
 
-    public void CreateItem<T>(ItemData itemData, int _count = 1) where T : BaseItem
+    public T CreateItem<T>(ItemData itemData, int _count = 1) where T : BaseItem
     {
         BaseItem baseItem = new BaseItem(itemData, _count);
-
+        return baseItem as T;
     }
 }
