@@ -111,7 +111,11 @@ public class ResourceManager
         }
 
         if (_pooling)
-            return Managers.Pool.Get(prefab);
+        {
+            GameObject poolingObject = Managers.Pool.Get(prefab);
+            poolingObject.transform.SetParent(_parent);
+            return poolingObject;
+        }
 
         GameObject go = Object.Instantiate(prefab, _parent);
 
@@ -131,6 +135,8 @@ public class ResourceManager
     {
         if (typeof(T) == typeof(TextAsset)) _key = _key + ".Data";
         if (typeof(T) == typeof(GameObject)) _key = _key + ".GameObject";
+        if (typeof(T) == typeof(AudioClip)) _key = _key + ".AudioClip";
+        if (typeof(T) == typeof(SoundProfile)) _key = _key + ".SoundProfile";
 
         return _key;
     }
