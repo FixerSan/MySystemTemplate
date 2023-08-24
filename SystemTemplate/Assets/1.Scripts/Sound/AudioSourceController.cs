@@ -15,12 +15,14 @@ public class AudioSourceController
         }
     }
 
-    private void Init()
+    public void Init()
     {
-        audioSource = Managers.Sound.SourceTransform.gameObject.AddComponent<AudioSource>();
-        audioSource.Stop();
-        audioSource.playOnAwake = false;
-        audioSource.volume = Managers.Sound.effectVolume;
+        if (audioSource != null)
+            return;
+        GameObject go = Managers.Resource.Instantiate("AudioSource_Effect", _parent: Managers.Sound.SourceTransform, _pooling: true);
+        audioSource = go.GetOrAddComponent<AudioSource>();
+        Stop();
+        SetVoulme(Managers.Sound.effectVolume);
     }
 
     public void Play(AudioClip _audioClip)
@@ -29,25 +31,32 @@ public class AudioSourceController
         Managers.Routine.StartCoroutine(Play());
     }
 
-    public void SetVoulme(float _volume)
-    {
-        audioSource.volume = _volume;
-    }
-
-    public void Clear()
-    {
-        audioSource.Stop();
-
-    }
-
-    public void Remove()
-    {
-        Object.Destroy(audioSource);
-    }
-
     private IEnumerator Play()
     {
         AudioSource.Play();
-        if(Managers.Sound.list)
+        float playtime = audioSource.clip.length;
+        yield return new WaitForSeconds(playtime);
+        audioSource.Stop();
+        Managers.Sound.StopSoundEffect(this);
+    }
+
+    public void Stop()
+    {
+        audioSource.Stop();
+        audioSource.playOnAwake = false;
+        audioSource.clip = null;
+        audioSource.loop = false;
+    }
+
+    public void RemoveAudioSource()
+    {
+        Stop();
+        Managers.Resource.Destroy(audioSource.gameObject);
+        audioSource = null;
+    }
+
+    public void SetVoulme(float _volume)
+    {
+        AudioSource.volume = _volume;
     }
 }

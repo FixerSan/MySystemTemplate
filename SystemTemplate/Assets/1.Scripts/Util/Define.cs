@@ -34,11 +34,16 @@ public class Define
 
     public enum SoundProfile_Effect
     {
-
+        Effect_1
     }
 
-    public enum SoundProfile_BGM
+    public enum AudioClip_Effect
     {
+        Effect_1
+    }
 
+    public enum AudioClip_BGM
+    {
+        BGM_1
     }
 }
