@@ -4,48 +4,20 @@ using UnityEngine;
 
 public class TestController : MonoBehaviour
 {
-    public string testKey = "TestAsset";
-    public List<GameObject> poolingObject = new List<GameObject>();
-    public Transform poolingTransform;
-
+    List<int> list = new List<int>();
+    private void Start()
+    {
+        list.Add(1);
+        list.Add(2);
+        list.Add(3);
+        list.Add(4);
+        list.Add(5);
+    }
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            Managers.Resource.Load<GameObject>(testKey,(go) => 
-            {
-                poolingObject.Add(Managers.Resource.Instantiate(testKey));
-            });
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            poolingObject.Add(Managers.Resource.Instantiate(testKey));
-        }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            foreach (var item in poolingObject)
-            {
-                Managers.Resource.Destroy(item);
-            }
-        }
-
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            Managers.Resource.Load<GameObject>(testKey, (go) =>
-            {
-                Managers.Pool.CreatePool(go);
-            });
-        }
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Managers.Resource.Load<GameObject>(testKey, (go) =>
-            {
-                Managers.Pool.DeletePool(go.name);
-            });
+            Debug.Log(list.Random());
         }
     }
 }

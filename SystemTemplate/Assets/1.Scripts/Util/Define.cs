@@ -31,4 +31,14 @@ public class Define
     {
 
     }
+
+    public enum SoundProfile_Effect
+    {
+
+    }
+
+    public enum SoundProfile_BGM
+    {
+
+    }
 }

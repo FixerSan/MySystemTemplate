@@ -44,6 +44,7 @@ public class Managers : MonoBehaviour
     private UIManager ui = new UIManager();
     private DataManager data = new DataManager();
     private ObjectManager obj = new ObjectManager();
+    private SoundManager sound = new SoundManager();
 
     public static ResourceManager Resource { get { return Instance?.resource; } }
     public static PoolManager Pool { get { return Instance?.pool; } }
@@ -52,11 +53,5 @@ public class Managers : MonoBehaviour
     public static CoroutineManager Routine { get { return CoroutineManager.Instance; } }
     public static SceneManager scene { get { return SceneManager.Instance; } }
     public static ObjectManager Object { get { return Instance?.obj; } }
-
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F1))
-            Managers.Object.Spawn<PlayerController>(Vector3.zero);
-    }
+    public static SoundManager Sound { get { return Instance?.sound; } }
 }
