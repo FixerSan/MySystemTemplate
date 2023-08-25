@@ -18,7 +18,7 @@ MonoBehaviour:
   m_GUID: 1a115dfffac069a40a78f6de9f488a12
   m_SerializeEntries:
   - m_GUID: c9875706ed2a955469c5c89975d3e263
-    m_Address: BGM_1
+    m_Address: BGM_1.AudioClip
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 567252403f7e0d046b92534b4a960154

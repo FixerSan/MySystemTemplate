@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static Define;
 
@@ -54,6 +55,7 @@ public class SoundManager
     public List<AudioSourceController> effectSourceControllers = new List<AudioSourceController>();
     public float bgmVolume = 1;
     public float effectVolume = 1;
+    private bool isFading;
 
     public void SetBGMVolume(float _volume)
     {
@@ -105,18 +107,6 @@ public class SoundManager
         });
     }
 
-    public void PlayBGM(AudioClip_BGM _bgm,int index = -1)
-    {
-        string loadKey = _bgm.ToString();
-        Managers.Resource.Load<AudioClip>(loadKey, (bgmClip) => 
-        {
-            BgmSource.Stop();
-            BgmSource.clip = bgmClip;
-            BgmSource.Play();
-        });
-
-    }
-
     public void StopSoundEffect(AudioSourceController _audioSourceController)
     {
         if (EffectSourceController == _audioSourceController)
@@ -127,5 +117,59 @@ public class SoundManager
 
         _audioSourceController.RemoveAudioSource();
         effectSourceControllers.Remove(_audioSourceController);
+    }
+
+    public void PlayBGM(AudioClip_BGM _bgm)
+    {
+        string loadKey = _bgm.ToString();
+        BgmSource.Stop();
+        Managers.Resource.Load<AudioClip>(loadKey, (bgmClip) =>
+        {
+            BgmSource.clip = bgmClip;
+            BgmSource.Play();
+        });
+    }
+
+    public void FadeInBGM(AudioClip_BGM _bgm, float _fadeTime)
+    {
+        Managers.Routine.StartCoroutine(FadeInBGMRoutine(_bgm, _fadeTime));
+    }
+
+    private IEnumerator FadeInBGMRoutine(AudioClip_BGM _bgm, float _fadeTime)
+    {
+        BgmSource.volume = 0;
+        PlayBGM(_bgm);
+
+        while (BgmSource.volume < bgmVolume)
+        {
+            BgmSource.volume += bgmVolume * Time.deltaTime / _fadeTime;
+            yield return null;
+        }
+    }
+
+    public void FadeOutBGM(float _fadeTime)
+    {
+        Managers.Routine.StartCoroutine(FadeOutBGMRoutine(_fadeTime));
+    }
+
+    private IEnumerator FadeOutBGMRoutine(float fadeTime)
+    {
+        while (BgmSource.volume > 0.0f)
+        {
+            BgmSource.volume -= bgmVolume * Time.deltaTime / fadeTime;
+            yield return null;
+        }
+        BgmSource.Stop();
+    }
+
+    public void FadeChangeBGM(AudioClip_BGM _bgm, float _fadeTime)
+    {
+        Managers.Routine.StartCoroutine(FadeChangeBGMRoutine(_bgm,_fadeTime));
+    }
+
+    private IEnumerator FadeChangeBGMRoutine(AudioClip_BGM _bgm, float _fadeTime)
+    {
+        yield return Managers.Routine.StartCoroutine(FadeOutBGMRoutine(_fadeTime));
+        yield return Managers.Routine.StartCoroutine(FadeInBGMRoutine(_bgm, _fadeTime));
     }
 }
